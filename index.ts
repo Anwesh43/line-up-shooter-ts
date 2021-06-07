@@ -218,3 +218,25 @@ class LineUpShooter {
         this.curr.draw(context)
     }
 }
+
+class Renderer {
+
+    curr : LineUpShooter = new LineUpShooter()
+    animator : Animator = new Animator()
+
+    render(context : CanvasRenderingContext2D) {
+        this.curr.draw(context)
+    }
+
+    handleTap(cb : Function) {
+        this.curr.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.curr.update(() => {
+                    this.animator.stop()
+                    cb()
+                })
+            })
+        })
+    }
+}
