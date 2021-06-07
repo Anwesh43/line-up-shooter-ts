@@ -4,7 +4,7 @@ const parts : number = 6
 const scGap : number = 0.06 / parts 
 const strokeFactor : number = 90 
 const sizeFactor : number = 6.9 
-const rFactor : number = 2.9 
+const rFactor : number = 32.9 
 const delay : number = 20 
 const colors : Array<string> = [
     "#f44336",
@@ -22,5 +22,57 @@ class ScaleUtil {
     }
     static divideScale(scale : number, i : number, n : number) : number {
         return Math.min(1 / n, ScaleUtil.maxScale(scale, i, n)) * n 
+    }
+}
+
+class DrawingUtil {
+
+    static drawLine(context : CanvasRenderingContext2D, x1 : number, y1 : number, x2 : number, y2 : number) {
+        context.beginPath()
+        context.moveTo(x1, y1)
+        context.lineTo(x2, y2) 
+        context.stroke()
+    }
+
+    static drawCircle(context : CanvasRenderingContext2D, x : number, y : number, r : number) {
+        context.beginPath()
+        context.arc(x, y, r, 0, 2 * Math.PI)
+        context.fill()
+    }
+
+    static drawLineUpShooter(context : CanvasRenderingContext2D, scale : number) {
+        const size : number = Math.min(w, h) / sizeFactor 
+        const r : number = Math.min(w, h) / rFactor 
+        const sc1 : number = ScaleUtil.divideScale(scale, 0, parts)
+        const sc2 : number = ScaleUtil.divideScale(scale, 1, parts)
+        const sc3 : number = ScaleUtil.divideScale(scale, 2, parts)
+        const sc4 : number = ScaleUtil.divideScale(scale, 3, parts)
+        const sc5: number = ScaleUtil.divideScale(scale, 4, parts)
+        const sc6 : number = ScaleUtil.divideScale(scale, 5, parts)
+        const upSize : number = size * (sc1 - sc6)
+        context.save()
+        context.translate(w / 2, h / 2)
+        context.rotate(sc4 * Math.PI / 2)
+        context.save()
+        context.translate(0, -size * sc2)
+        DrawingUtil.drawLine(context, -upSize / 2, 0, upSize / 2, 0)
+        for (var j = 0;  j < 2; j++) {
+            DrawingUtil.drawCircle(
+                context,
+                size * 0.5 * (1 - 2 * j),
+                -r - h / 2 + (h / 2 - size + r) * (sc3 - sc5),
+                r
+            )
+        }
+        context.restore()
+        context.restore()
+    }
+
+    static drawLUSNode(context : CanvasRenderingContext2D, i : number, scale : number) {
+        context.lineCap = 'round'
+        context.lineWidth = Math.min(w, h) / strokeFactor 
+        context.strokeStyle = colors[i]
+        context.fillStyle = colors[i]
+        DrawingUtil.drawLineUpShooter(context, scale)
     }
 }
