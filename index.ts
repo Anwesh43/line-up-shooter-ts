@@ -50,6 +50,9 @@ class DrawingUtil {
         const sc5: number = ScaleUtil.divideScale(scale, 4, parts)
         const sc6 : number = ScaleUtil.divideScale(scale, 5, parts)
         const upSize : number = size * (sc1 - sc6)
+        if (sc1 < 0.1 || sc6 > 0.9) {
+            return 
+        }
         context.save()
         context.translate(w / 2, h / 2)
         context.rotate(sc4 * Math.PI / 2)
@@ -60,7 +63,7 @@ class DrawingUtil {
             DrawingUtil.drawCircle(
                 context,
                 size * 0.5 * (1 - 2 * j),
-                -r - h / 2 + (h / 2 - size + r) * (sc3 - sc5),
+                -r - h / 2 + (h / 2 + r) * (sc3) - (w / 2 + r) * sc5,
                 r
             )
         }
